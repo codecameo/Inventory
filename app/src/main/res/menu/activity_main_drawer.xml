@@ -7,9 +7,9 @@
             android:icon="@drawable/ic_assessment_black_24dp"
             android:title="Target" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_card_membership_black_24dp"
-            android:title="Performance" />
+            android:id="@+id/nav_employee_location"
+            android:icon="@drawable/ic_user_location_black"
+            android:title="Employee Location" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_slideshow"

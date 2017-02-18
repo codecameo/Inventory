@@ -96,8 +96,8 @@ public class MainActivity extends BaseActivity
         if (id == R.id.nav_target) {
             // Handle the camera action
             startActivity(new Intent(MainActivity.this,TargetActivity.class));
-        } else if (id == R.id.nav_gallery) {
-
+        } else if (id == R.id.nav_employee_location) {
+            startActivity(new Intent(MainActivity.this,EmployeeLocationActivity.class));
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
