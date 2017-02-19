@@ -1,9 +1,16 @@
 package wit.bytes.inventory.activity;
 
+import android.Manifest;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,8 +20,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import wit.bytes.inventory.R;
+import wit.bytes.inventory.services.LocationTrackerService;
+import wit.bytes.inventory.utils.PermissionHandler;
+
+import static wit.bytes.inventory.utils.PermissionHandler.REQUEST_BOTH_LOCATION_PERMISSION;
+import static wit.bytes.inventory.utils.PermissionHandler.REQUEST_COARSE_LOCATION;
+import static wit.bytes.inventory.utils.PermissionHandler.REQUEST_FINE_LOCATION;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -31,6 +45,7 @@ public class MainActivity extends BaseActivity
         initView();
         setupToolBar(R.id.toolbar);
         initNavigationView();
+        enableLocation();
 
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,6 +54,23 @@ public class MainActivity extends BaseActivity
                         .setAction("Action", null).show();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("Location","Is Service running "+isMyServiceRunning(LocationTrackerService.class));
+
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void initNavigationView() {
@@ -101,7 +133,7 @@ public class MainActivity extends BaseActivity
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
-
+            startService(new Intent(MainActivity.this, LocationTrackerService.class));
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
@@ -111,5 +143,33 @@ public class MainActivity extends BaseActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void enableLocation() {
+        if (!PermissionHandler.hasFineLocationPermission(this)) {
+            PermissionHandler.requestPermissions(this, PermissionHandler.REQUEST_FINE_LOCATION, getString(R.string.permission_msg_location), Manifest.permission.ACCESS_FINE_LOCATION);
+        } else if (!PermissionHandler.hasCoarseLocationPermission(this)) {
+            PermissionHandler.requestPermissions(this, PermissionHandler.REQUEST_FINE_LOCATION, getString(R.string.permission_msg_location), Manifest.permission.ACCESS_COARSE_LOCATION);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+
+            case REQUEST_BOTH_LOCATION_PERMISSION:
+            case REQUEST_COARSE_LOCATION:
+            case REQUEST_FINE_LOCATION:
+
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Location enabled", Toast.LENGTH_SHORT).show();
+                    enableLocation();
+                } else {
+                    Toast.makeText(this, getString(R.string.toast_location_permision_denied), Toast.LENGTH_LONG).show();
+                }
+                break;
+        }
     }
 }
