@@ -7,10 +7,9 @@ import com.firebase.jobdispatcher.Driver;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
 import com.firebase.jobdispatcher.GooglePlayDriver;
 import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.JobTrigger;
 import com.firebase.jobdispatcher.Lifetime;
 import com.firebase.jobdispatcher.Trigger;
-
-import java.util.concurrent.TimeUnit;
 
 import wit.bytes.inventory.services.LocationUpdateJobService;
 
@@ -29,23 +28,35 @@ public class LocationUpdateUtilities {
 
     private static final String LOCATION_JOB_TAG = "location_job_tag";
 
-    synchronized public static void scheduleLocationUpdate(final Context context){
+    synchronized public static void scheduleLocationUpdate(final Context context, boolean isStartNow){
 
         Driver driver = new GooglePlayDriver(context);
         FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(driver);
+
+        JobTrigger jobTrigger = Trigger.executionWindow(0, LOCATION_UPDATE_INTERVAL_SECONDS);
+        if (isStartNow){
+            jobTrigger = Trigger.NOW;
+        }
+
         Job locationUpdateJob = dispatcher.newJobBuilder()
                 .setService(LocationUpdateJobService.class)
                 .setTag(LOCATION_JOB_TAG)
                 .setConstraints(Constraint.ON_ANY_NETWORK)
                 .setLifetime(Lifetime.FOREVER)
-                .setRecurring(true)
+                .setRecurring(!isStartNow)
                 // starts between 0 seconds and interval seconds from now.
-                .setTrigger(Trigger.executionWindow(0, LOCATION_UPDATE_INTERVAL_SECONDS))
+                .setTrigger(jobTrigger)
                 .setReplaceCurrent(true)
                 .build();
         dispatcher.schedule(locationUpdateJob);
     }
 
+
+    public static void stopLocationUpdateScheduler(Context context){
+        Driver driver = new GooglePlayDriver(context);
+        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(driver);
+        dispatcher.cancel(LOCATION_JOB_TAG);
+    }
 
 
 }
