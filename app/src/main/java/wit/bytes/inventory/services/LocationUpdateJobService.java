@@ -25,7 +25,7 @@ public class LocationUpdateJobService extends JobService {
 
     private static final String TAG = "LocationUpdateJobServic";
 
-    public static final String LOCATION_URL = "http://aimsil.com/";
+    public static final String LOCATION_URL = "http://aimsil.com/showcasing/";
 
     private JobParameters mJobParameters;
 
@@ -40,20 +40,33 @@ public class LocationUpdateJobService extends JobService {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
 
-            LocationAPI locationAPI = retrofit.create(LocationAPI.class);
+            final LocationAPI locationAPI = retrofit.create(LocationAPI.class);
 
-
-            locationAPI.getLocations(new Callback<List<Location>>() {
+            /*locationAPI.getLocations().enqueue(new Callback<List<Location>>() {
                 @Override
                 public void onResponse(Call<List<Location>> call, Response<List<Location>> response) {
-                    Log.d(TAG, "onResponse: " + response.body().size());
+                    List<Location>locations = response.body();
+                    Log.d(TAG, "onResponse: " + locations.size());
                 }
 
                 @Override
                 public void onFailure(Call<List<Location>> call, Throwable t) {
+                    Log.d(TAG, "onResponse: failure" );
+                }
+            });*/
 
+            locationAPI.getLocations().enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    Log.d(TAG, "onResponse: " + response.body());
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Log.d(TAG, "onResponse: failure" );
                 }
             });
+
 
             return null;
         }
