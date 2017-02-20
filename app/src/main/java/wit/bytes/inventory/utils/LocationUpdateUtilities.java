@@ -12,7 +12,7 @@ import com.firebase.jobdispatcher.Trigger;
 
 import java.util.concurrent.TimeUnit;
 
-import wit.bytes.inventory.service.LocationUpdateJobService;
+import wit.bytes.inventory.services.LocationUpdateJobService;
 
 /**
  * Created by Sharifur Rahaman on 2/19/2017.
