@@ -52,9 +52,6 @@ public class MainActivity extends BaseActivity
                         .setAction("Action", null).show();
             }
         });
-
-        LocationUpdateUtilities.scheduleLocationUpdate(this);
-
     }
 
     @Override

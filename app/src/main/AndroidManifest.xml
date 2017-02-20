@@ -52,6 +52,13 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".receivers.LocationUpdateReceiver">
+            <intent-filter>
+                <action android:name="wit.bytes.inventory.receivers.LocationUpdate" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
