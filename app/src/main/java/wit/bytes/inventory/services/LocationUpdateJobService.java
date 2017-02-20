@@ -8,9 +8,6 @@ import com.firebase.jobdispatcher.JobService;
 
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import wit.bytes.inventory.interfaces.LocationAPI;
@@ -55,7 +52,7 @@ public class LocationUpdateJobService extends JobService {
                 }
             });*/
 
-            locationAPI.getLocations().enqueue(new Callback<String>() {
+       /*     locationAPI.getLocations().enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     Log.d(TAG, "onResponse: " + response.body());
@@ -65,7 +62,7 @@ public class LocationUpdateJobService extends JobService {
                 public void onFailure(Call<String> call, Throwable t) {
                     Log.d(TAG, "onResponse: failure" );
                 }
-            });
+            });*/
 
 
             return null;

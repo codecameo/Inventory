@@ -27,10 +27,7 @@ public class LocationUpdateUtilities {
 
     private static final String LOCATION_JOB_TAG = "location_job_tag";
 
-    private static boolean sInitialized;
-
     synchronized public static void scheduleLocationUpdate(final Context context){
-        if (sInitialized)return;
 
         Driver driver = new GooglePlayDriver(context);
         FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(driver);
@@ -45,7 +42,6 @@ public class LocationUpdateUtilities {
                 .setReplaceCurrent(true)
                 .build();
         dispatcher.schedule(locationUpdateJob);
-        sInitialized = true;
     }
 
 
