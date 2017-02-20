@@ -31,6 +31,7 @@ public class LocationTrackerService extends Service implements
 
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
+    private PendingIntent pi;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
@@ -84,7 +85,7 @@ public class LocationTrackerService extends Service implements
         }
 
         Intent intent = new Intent("wit.bytes.inventory.LOCATION_READY");
-        PendingIntent pi = PendingIntent.getBroadcast(getApplicationContext(), 0, intent,
+        pi = PendingIntent.getBroadcast(getApplicationContext(), 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, pi);
@@ -117,6 +118,8 @@ public class LocationTrackerService extends Service implements
     @Override
     public void onDestroy() {
         super.onDestroy();
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, pi);
+        mGoogleApiClient.disconnect();
         Log.d("Location","Destroy");
     }
 

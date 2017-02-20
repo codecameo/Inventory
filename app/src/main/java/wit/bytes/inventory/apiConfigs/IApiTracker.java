@@ -15,7 +15,7 @@ public interface IApiTracker {
 
     @FormUrlEncoded
     @POST("/employee_location")
-    Call<String> sendEmployeeLocation(@Field("employee_id") String employeeID,
+    Call<String> sendEmployeeLocation(@Field("employee_id") int employeeID,
                                 @Field("latitude") double lat,
                                 @Field("longitude") double lng,
                                 @Field("time") String time,

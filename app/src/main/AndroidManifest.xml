@@ -37,6 +37,10 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/title_activity_employee_location"/>
 
+        <activity android:name=".activity.EmployeeTrackerActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_activity_employee_location"/>
+
         <service android:name=".services.LocationTrackerService"/>
         <service android:name=".services.SendEmployeeLocationService"/>
 

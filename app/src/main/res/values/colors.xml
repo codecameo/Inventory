@@ -12,5 +12,6 @@
     <color name="title">#3a3a3a</color>
 
     <color name="sub_title">#505050</color>
+    <color name="online">#17bc30</color>
 
 </resources>
