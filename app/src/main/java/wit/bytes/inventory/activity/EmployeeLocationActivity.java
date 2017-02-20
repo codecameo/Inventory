@@ -3,7 +3,6 @@ package wit.bytes.inventory.activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -43,7 +42,8 @@ public class EmployeeLocationActivity extends BaseActivity implements OnMapReady
 
         initVariable();
 
-        LocationUpdateUtilities.scheduleLocationUpdate(this);
+        // Scheduler for now
+        LocationUpdateUtilities.scheduleLocationUpdate(this, true);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -54,12 +54,15 @@ public class EmployeeLocationActivity extends BaseActivity implements OnMapReady
     @Override
     protected void onResume() {
         super.onResume();
+        // Scheduler for regular interval
+        LocationUpdateUtilities.scheduleLocationUpdate(this, false);
         mLocationUpdateObservable.addObserver(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        LocationUpdateUtilities.stopLocationUpdateScheduler(this);
         mLocationUpdateObservable.deleteObserver(this);
     }
 
