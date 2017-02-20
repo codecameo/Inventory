@@ -37,6 +37,10 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/title_activity_employee_location"/>
 
+        <activity android:name=".activity.EmployeeTrackerActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_activity_employee_location"/>
+
         <service android:name=".services.LocationTrackerService"/>
         <service android:name=".services.SendEmployeeLocationService"/>
 
@@ -44,6 +48,13 @@
         <receiver android:name=".receivers.LocationReceiver">
             <intent-filter>
                 <action android:name="wit.bytes.inventory.LOCATION_READY" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".receivers.LocationUpdateReceiver">
+            <intent-filter>
+                <action android:name="wit.bytes.inventory.receivers.LocationUpdate" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>

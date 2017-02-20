@@ -52,26 +52,11 @@ public class MainActivity extends BaseActivity
                         .setAction("Action", null).show();
             }
         });
-
-        LocationUpdateUtilities.scheduleLocationUpdate(this);
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("Location","Is Service running "+isMyServiceRunning(LocationTrackerService.class));
-
-    }
-
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void initNavigationView() {
@@ -134,7 +119,7 @@ public class MainActivity extends BaseActivity
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
-            startService(new Intent(MainActivity.this, LocationTrackerService.class));
+            startActivity(new Intent(MainActivity.this, EmployeeTrackerActivity.class));
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {

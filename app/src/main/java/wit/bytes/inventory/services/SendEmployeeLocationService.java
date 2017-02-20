@@ -53,7 +53,7 @@ public class SendEmployeeLocationService extends IntentService {
 
             IApiTracker apiService = ApiClient.getClient().create(IApiTracker.class);
 
-            Call<String> call = apiService.sendEmployeeLocation("E0001",mLocation.getLatitude(),mLocation.getLongitude(),dateText,timeZone.getDisplayName(false, TimeZone.SHORT));
+            Call<String> call = apiService.sendEmployeeLocation(1,mLocation.getLatitude(),mLocation.getLongitude(),dateText,timeZone.getDisplayName(false, TimeZone.SHORT));
             call.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {

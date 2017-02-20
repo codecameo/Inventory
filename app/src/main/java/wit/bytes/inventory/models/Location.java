@@ -3,11 +3,13 @@ package wit.bytes.inventory.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by user on 2/19/2017.
  */
 
-public class Location {
+public class Location implements Serializable{
 
     @SerializedName("employee_id")
     @Expose
@@ -20,10 +22,10 @@ public class Location {
     private String mobileNumber;
     @SerializedName("lat")
     @Expose
-    private String lat;
+    private float lat;
     @SerializedName("lng")
     @Expose
-    private String lng;
+    private float lng;
     @SerializedName("time")
     @Expose
     private String time;
@@ -52,19 +54,19 @@ public class Location {
         this.mobileNumber = mobileNumber;
     }
 
-    public String getLat() {
+    public float getLat() {
         return lat;
     }
 
-    public void setLat(String lat) {
+    public void setLat(float lat) {
         this.lat = lat;
     }
 
-    public String getLng() {
+    public float getLng() {
         return lng;
     }
 
-    public void setLng(String lng) {
+    public void setLng(float lng) {
         this.lng = lng;
     }
 

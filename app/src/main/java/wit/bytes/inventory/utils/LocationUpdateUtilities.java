@@ -23,7 +23,9 @@ public class LocationUpdateUtilities {
 
     private static final int LOCATION_UPDATE_INTERVAL_MINUTE = 1;
 
-    private static final int LOCATION_UPDATE_INTERVAL_SECONDS = (int) TimeUnit.MINUTES.toSeconds(LOCATION_UPDATE_INTERVAL_MINUTE);
+    //private static final int LOCATION_UPDATE_INTERVAL_SECONDS = (int) TimeUnit.MINUTES.toSeconds(LOCATION_UPDATE_INTERVAL_MINUTE);
+
+    private static final int LOCATION_UPDATE_INTERVAL_SECONDS = 20;
 
     private static final String LOCATION_JOB_TAG = "location_job_tag";
 
