@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.ResultReceiver;
 
 import wit.bytes.inventory.interfaces.ILocationTracker;
+import wit.bytes.inventory.interfaces.ILoginProvider;
+import wit.bytes.inventory.wrappers.LoginAdapter;
 import wit.bytes.inventory.wrappers.TrackerAdapter;
 
 /**
@@ -30,5 +32,9 @@ public class ProviderFactory {
 
     public ILocationTracker getLocationSendProvider(Context context, ResultReceiver receiver) {
         return (ILocationTracker) new TrackerAdapter(context, receiver);
+    }
+
+    public ILoginProvider getProductProvider(Context context, ResultReceiver receiver) {
+        return (ILoginProvider) new LoginAdapter(context, receiver);
     }
 }

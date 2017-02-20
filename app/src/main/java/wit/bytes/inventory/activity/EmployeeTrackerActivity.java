@@ -25,6 +25,7 @@ public class EmployeeTrackerActivity extends BaseActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_employee_tracker);
         initViews();
+        setupToolBar(R.id.employee_tracker_toolbar);
         setupView();
         initListeners();
     }
