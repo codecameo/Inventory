@@ -1,44 +1,39 @@
 package wit.bytes.inventory.models.api_models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 /**
  * Created by Md. Sifat-Ul Haque on 2/21/2017.
  */
 
-public class LoginResponseModel implements Serializable{
+public class LoginResponseModel extends BaseResponse implements Serializable{
 
-    private boolean success;
-    private String message;
-    private Data data;
+    @SerializedName("data")
+    @Expose
+    private LoginData data;
 
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public Data getData() {
+    public LoginData getData() {
         return data;
     }
 
-    public void setData(Data data) {
+    public void setData(LoginData data) {
         this.data = data;
     }
 
-    public class Data implements Serializable{
+    public class LoginData implements Serializable{
+
+        @SerializedName("user_id")
+        @Expose
         private int user_id;
-        private String name, access_token;
+        @SerializedName("name")
+        @Expose
+        private String name;
+        @SerializedName("access_token")
+        @Expose
+        private String access_token;
 
         public int getUser_id() {
             return user_id;

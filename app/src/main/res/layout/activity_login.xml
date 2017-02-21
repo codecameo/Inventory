@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:background="@drawable/theme_red_background"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:fitsSystemWindows="true">
 
     <!--<TextView
         android:textStyle="italic"
@@ -21,9 +21,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        app:cardElevation="@dimen/cardview_elevation"
+        android:layout_margin="@dimen/activity_vertical_margin"
         app:cardCornerRadius="@dimen/cardview_radius"
-        android:layout_margin="@dimen/activity_vertical_margin">
+        app:cardElevation="@dimen/cardview_elevation">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,21 +32,22 @@
             android:orientation="vertical">
 
             <TextView
-                android:textColor="@color/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:fontFamily="sans-serif-medium"
                 android:text="Login"
-                android:textSize="@dimen/abc_text_size_large_material" />
+                android:textColor="@color/title"
+                android:textSize="@dimen/abc_text_size_headline_material" />
 
             <TextView
-                android:textAllCaps="true"
-                android:textColor="@color/colorPrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Your Username" />
+                android:text="Username"
+                android:textAllCaps="true"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/abc_text_size_caption_material" />
 
             <EditText
                 android:id="@+id/et_username"
@@ -54,31 +55,32 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:hint="Username"
-                android:textSize="16sp" />
+                android:textSize="@dimen/abc_text_size_small_material" />
 
             <TextView
-                android:textAllCaps="true"
-                android:textColor="@color/colorPrimary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Password" />
+                android:text="Password"
+                android:textAllCaps="true"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/abc_text_size_caption_material" />
 
             <EditText
                 android:id="@+id/et_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:hint="Password"
                 android:inputType="textPassword"
-                android:textSize="16sp"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+                android:textSize="@dimen/abc_text_size_small_material" />
 
             <Button
                 android:id="@+id/btn_login"
-                android:text="Login"
-                android:textColor="@android:color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/login_button_bg"/>
+                android:background="@drawable/login_button_bg"
+                android:text="Login"
+                android:textColor="@android:color/white" />
 
         </LinearLayout>
 

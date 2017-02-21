@@ -1,5 +1,7 @@
 package wit.bytes.inventory.apiConfigs;
 
+import org.json.JSONObject;
+
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -13,7 +15,7 @@ import wit.bytes.inventory.models.api_models.LoginResponseModel;
 public interface IApiUserAuth {
 
     @FormUrlEncoded
-    @POST("api/v1/auth/login")
+    @POST("auth/login")
     Call<LoginResponseModel> login(@Field("username") String username,
-                                   @Field("password") String password);
+                           @Field("password") String password);
 }

@@ -11,6 +11,8 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 import wit.bytes.inventory.models.Location;
+import wit.bytes.inventory.models.api_models.LocationGetterResponse;
+import wit.bytes.inventory.models.api_models.LocationSenderResponse;
 
 /**
  * Created by Md. Sifat-Ul Haque on 2/19/2017.
@@ -18,14 +20,14 @@ import wit.bytes.inventory.models.Location;
 public interface IApiTracker {
 
     @FormUrlEncoded
-    @POST("/employee_location")
-    Call<String> sendEmployeeLocation(@Field("employee_id") int employeeID,
-                                @Field("latitude") double lat,
-                                @Field("longitude") double lng,
-                                @Field("time") String time,
-                                @Field("time_zone") String timeZone);
+    @POST("locations")
+    Call<LocationSenderResponse> sendEmployeeLocation(@Field("user_id") int employeeID,
+                                                      @Field("latitude") double lat,
+                                                      @Field("longitude") double lng,
+                                                      @Field("time") String time,
+                                                      @Field("timezone") String timeZone, @Query("access_token") String access_token);
 
 
-    @GET("locations.json")
-    Call<List<Location>> getLocations();
+    @GET("locations")
+    Call<LocationGetterResponse> getLocations(@Query("access_token") String access_token);
 }

@@ -11,11 +11,18 @@ import com.firebase.jobdispatcher.JobService;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import wit.bytes.inventory.apiConfigs.ApiClient;
 import wit.bytes.inventory.apiConfigs.IApiTracker;
 import wit.bytes.inventory.models.Location;
+import wit.bytes.inventory.models.api_models.LocationGetterResponse;
+import wit.bytes.inventory.utils.Constants;
+import wit.bytes.inventory.utils.PreferenceUtil;
 
 import static wit.bytes.inventory.receivers.LocationUpdateReceiver.KEY_UPDATE_LOCATION;
 
@@ -31,10 +38,12 @@ public class LocationUpdateJobService extends JobService {
     private JobParameters mJobParameters;
 
     private LocationUpdateTask mLocationUpdateTask;
+    private String mAccessToken;
 
     @Override
     public boolean onStartJob(JobParameters job) {
         mJobParameters = job;
+        mAccessToken = PreferenceUtil.getInstance(this).getString(Constants.KEY_ACCESS_TOKEN,"");
         new LocationUpdateTask().execute();
         return true;
     }
@@ -51,28 +60,39 @@ public class LocationUpdateJobService extends JobService {
         protected List<Location> doInBackground(Void... voids) {
             Log.d(TAG, "retrofit initialization");
 
-            List<Location> locations = null;
+
+            LocationGetterResponse locationGetterResponse;
+            ArrayList<Location> locations = new ArrayList<>();
 
             IApiTracker apiService = ApiClient.getClient().create(IApiTracker.class);
 
             //final LocationAPI locationAPI = retrofit.create(LocationAPI.class);
 
             try {
-                locations = apiService.getLocations().execute().body();
+                locationGetterResponse = apiService.getLocations(mAccessToken).execute().body();
+                if (locationGetterResponse != null){
+                    locations = locationGetterResponse.getData();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
                 Log.d(TAG, "onResponse: failure");
             }
 
-            /*apiService.getLocations().enqueue(new Callback<List<Location>>() {
+            /*apiService.getLocations(mAccessToken).enqueue(new Callback<LocationGetterResponse>() {
                 @Override
-                public void onResponse(Call<List<Location>> call, Response<List<Location>> response) {
-                    locations = response.body();
-                    Log.d(TAG, "onResponse: " + locations.size());
+                public void onResponse(Call<LocationGetterResponse> call, Response<LocationGetterResponse> response) {
+
+                    Log.d(TAG,"URL "+call.request().url());
+
+                    if (response.isSuccessful()){
+                        locations.clear();
+                        locations.addAll(response.body().getData());
+                        Log.d(TAG, "onResponse: " + locations.size());
+                    }
                 }
 
                 @Override
-                public void onFailure(Call<List<Location>> call, Throwable t) {
+                public void onFailure(Call<LocationGetterResponse> call, Throwable t) {
                     Log.d(TAG, "onResponse: failure" );
                 }
             });*/
@@ -93,7 +113,7 @@ public class LocationUpdateJobService extends JobService {
                 intent.putExtras(bundle);
                 sendBroadcast(intent);
 
-                Toast.makeText(LocationUpdateJobService.this,"Size "+locations.size(),Toast.LENGTH_SHORT).show();
+                //Toast.makeText(LocationUpdateJobService.this,"Size "+locations.size(),Toast.LENGTH_SHORT).show();
             }
             jobFinished(mJobParameters, false);
         }

@@ -16,7 +16,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import wit.bytes.inventory.apiConfigs.ApiClient;
 import wit.bytes.inventory.apiConfigs.IApiTracker;
+import wit.bytes.inventory.models.api_models.LocationSenderResponse;
 import wit.bytes.inventory.receivers.LocationReceiver;
+import wit.bytes.inventory.utils.Constants;
+import wit.bytes.inventory.utils.PreferenceUtil;
 
 import static wit.bytes.inventory.receivers.LocationReceiver.KEY_LOCATION_CHANGED;
 
@@ -30,9 +33,21 @@ public class SendEmployeeLocationService extends IntentService {
      * Creates an IntentService.  Invoked by your subclass's constructor.
      */
     private Location mLocation;
+    private PreferenceUtil mPreferenceUtil;
+    private String mAccessToken;
+    private int mUserId;
 
     public SendEmployeeLocationService() {
         super("SendEmployeeLocationService");
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mPreferenceUtil = PreferenceUtil.getInstance(this);
+        mAccessToken = mPreferenceUtil.getString(Constants.KEY_ACCESS_TOKEN,"");
+        mUserId = mPreferenceUtil.getInt(Constants.KEY_USER_ID,-1);
+
     }
 
     @Override
@@ -53,17 +68,23 @@ public class SendEmployeeLocationService extends IntentService {
 
             IApiTracker apiService = ApiClient.getClient().create(IApiTracker.class);
 
-            Call<String> call = apiService.sendEmployeeLocation(1,mLocation.getLatitude(),mLocation.getLongitude(),dateText,timeZone.getDisplayName(false, TimeZone.SHORT));
-            call.enqueue(new Callback<String>() {
+            Call<LocationSenderResponse> call = apiService.sendEmployeeLocation(mUserId,
+                    mLocation.getLatitude(),
+                    mLocation.getLongitude(),
+                    dateText,
+                    timeZone.getDisplayName(false, TimeZone.SHORT),
+                    mAccessToken);
+
+            call.enqueue(new Callback<LocationSenderResponse>() {
                 @Override
-                public void onResponse(Call<String> call, Response<String> response) {
-                    Log.d("Location","Send Data");
+                public void onResponse(Call<LocationSenderResponse> call, Response<LocationSenderResponse> response) {
+                    Log.d("Location",response.body().getMessage());
                     LocationReceiver.completeWakefulIntent(intent);
                 }
 
                 @Override
-                public void onFailure(Call<String> call, Throwable t) {
-                    Log.d("Location","Send Data Error");
+                public void onFailure(Call<LocationSenderResponse> call, Throwable t) {
+                    Log.d("Location","Send LoginData Error");
                     LocationReceiver.completeWakefulIntent(intent);
                 }
             });

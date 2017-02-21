@@ -87,9 +87,9 @@ public class EmployeeLocationActivity extends BaseActivity implements OnMapReady
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
+        /*LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney").icon(mBitmapDescriptor));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));*/
     }
 
 
@@ -108,9 +108,9 @@ public class EmployeeLocationActivity extends BaseActivity implements OnMapReady
     public void update(Observable observable, Object data) {
         mLocations = (ArrayList<Location>) data;
 
-        Log.d("LocationUpdateJobServic","Got Data "+mLocations.size());
+        Log.d("LocationUpdateJobServic","Got LoginData "+mLocations.size());
 
-        Toast.makeText(this,"Size Got "+mLocations.size(),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"Size Got "+mLocations.size(),Toast.LENGTH_SHORT).show();
 
         if (mMap != null){
             mMap.clear();

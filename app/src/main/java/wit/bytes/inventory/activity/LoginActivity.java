@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,7 +47,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private void checkPreviousLogin() {
         int user_id = mPreferenceUtil.getInt(Constants.KEY_USER_ID,-1);
         if (user_id != -1){
-            startActivity(new Intent(LoginActivity.this,MainActivity.class));
+            openHomeScreen();
         }
     }
 
@@ -97,6 +98,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             mPreferenceUtil.setString(Constants.KEY_USER_NAME, loginResponseModel.getData().getName());
             mPreferenceUtil.setInt(Constants.KEY_USER_ID, loginResponseModel.getData().getUser_id());
             mPreferenceUtil.setString(Constants.KEY_ACCESS_TOKEN, loginResponseModel.getData().getAccess_token());
+
+            Log.d("Login","Access Token "+loginResponseModel.getData().getAccess_token());
+            Log.d("Login","User ID "+loginResponseModel.getData().getUser_id());
+
+            openHomeScreen();
+        }else if (resultData != null){
+            LoginResponseModel loginResponseModel = (LoginResponseModel) resultData.getSerializable(LoginAdapter.KEY_LOGIN_RESPONSE);
+            Toast.makeText(this,loginResponseModel.getMessage(),Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void openHomeScreen() {
+        startActivity(new Intent(LoginActivity.this,MainActivity.class));
+        finish();
     }
 }
