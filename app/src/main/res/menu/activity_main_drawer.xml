@@ -8,16 +8,12 @@
             android:title="Target" />
         <item
             android:id="@+id/nav_employee_location"
-            android:icon="@drawable/ic_user_location_black"
+            android:icon="@drawable/ic_route"
             android:title="Employee Location" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/nav_track"
+            android:icon="@drawable/ic_tracking"
+            android:title="Tracking Status" />
     </group>
 
     <item android:title="Communicate">

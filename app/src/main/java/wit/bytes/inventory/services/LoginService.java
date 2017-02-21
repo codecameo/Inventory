@@ -83,17 +83,16 @@ public class LoginService extends IntentService {
                            resultReceiver.get().send(Constants.API_RESPONSE_SUCCESSFUL,bundle);
                        }
                    }else {
-                       BaseResponse baseResponseModel = null;
                        try {
                            Gson gson = new Gson();
-                           baseResponseModel = gson.getAdapter(BaseResponse.class).fromJson(response.errorBody().string());
+                           loginResponseModel = gson.getAdapter(LoginResponseModel.class).fromJson(response.errorBody().string());
                        } catch (IOException e) {
                            e.printStackTrace();
                        }
 
-                       if(baseResponseModel != null){
+                       if(loginResponseModel != null){
                            Bundle bundle = new Bundle();
-                           bundle.putSerializable(LoginAdapter.KEY_LOGIN_RESPONSE, baseResponseModel);
+                           bundle.putSerializable(LoginAdapter.KEY_LOGIN_RESPONSE, loginResponseModel);
                            resultReceiver.get().send(Constants.API_RESPONSE_ERROR, bundle);
                        }else {
                            resultReceiver.get().send(Constants.API_RESPONSE_ERROR, null);

@@ -116,9 +116,7 @@ public class MainActivity extends BaseActivity
             startActivity(new Intent(MainActivity.this,TargetActivity.class));
         } else if (id == R.id.nav_employee_location) {
             startActivity(new Intent(MainActivity.this,EmployeeLocationActivity.class));
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_track) {
             startActivity(new Intent(MainActivity.this, EmployeeTrackerActivity.class));
         } else if (id == R.id.nav_share) {
 

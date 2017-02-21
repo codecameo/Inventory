@@ -1,19 +1,31 @@
 package wit.bytes.inventory.activity;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -25,14 +37,40 @@ import wit.bytes.inventory.R;
 import wit.bytes.inventory.models.Location;
 import wit.bytes.inventory.obserables.LocationUpdateObservable;
 import wit.bytes.inventory.utils.LocationUpdateUtilities;
+import wit.bytes.inventory.utils.PermissionHandler;
 import wit.bytes.inventory.utils.Utils;
 
-public class EmployeeLocationActivity extends BaseActivity implements OnMapReadyCallback, Observer {
+import static wit.bytes.inventory.utils.PermissionHandler.REQUEST_BOTH_LOCATION_PERMISSION;
+import static wit.bytes.inventory.utils.PermissionHandler.REQUEST_COARSE_LOCATION;
+import static wit.bytes.inventory.utils.PermissionHandler.REQUEST_FINE_LOCATION;
 
-    private GoogleMap mMap;
+public class EmployeeLocationActivity extends BaseActivity implements OnMapReadyCallback, Observer, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+
+    private GoogleMap mGoogleMap;
     private BitmapDescriptor mBitmapDescriptor;
     private LocationUpdateObservable mLocationUpdateObservable;
     private ArrayList<Location> mLocations = new ArrayList<>();
+    private LatLng mMyLastLocation;
+    private CameraPosition mCameraPosition;
+    private GoogleApiClient mGoogleApiClient;
+    private boolean isPreviouslyLoaded;
+    private Handler mHandler;
+    private UiSettings mUiSettings;
+
+    private Runnable mLastLocation = new Runnable() {
+        @Override
+        public void run() {
+            if (ActivityCompat.checkSelfPermission(EmployeeLocationActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(EmployeeLocationActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                if (mGoogleApiClient.isConnected()) {
+                    android.location.Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                    if (lastLocation != null) {
+                        mMyLastLocation = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+                        setCamera();
+                    }
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +107,14 @@ public class EmployeeLocationActivity extends BaseActivity implements OnMapReady
     private void initVariable() {
         mBitmapDescriptor = getBitmapDescriptor(R.drawable.ic_employee_marker);
         mLocationUpdateObservable = LocationUpdateObservable.getInstance();
+        mHandler = new Handler();
+
+        //Initializing googleapi client
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
     }
 
 
@@ -84,12 +130,15 @@ public class EmployeeLocationActivity extends BaseActivity implements OnMapReady
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        mMap = googleMap;
+        mGoogleMap = googleMap;
+        mUiSettings = mGoogleMap.getUiSettings();
+        mapUiSetting(true);
+        setCamera();
 
         // Add a marker in Sydney and move the camera
         /*LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney").icon(mBitmapDescriptor));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));*/
+        mGoogleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney").icon(mBitmapDescriptor));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));*/
     }
 
 
@@ -112,12 +161,128 @@ public class EmployeeLocationActivity extends BaseActivity implements OnMapReady
 
         //Toast.makeText(this,"Size Got "+mLocations.size(),Toast.LENGTH_SHORT).show();
 
-        if (mMap != null){
-            mMap.clear();
+        if (mGoogleMap != null){
+            mGoogleMap.clear();
             for (Location location : mLocations) {
                 LatLng sydney = new LatLng(location.getLat(), location.getLng());
-                mMap.addMarker(new MarkerOptions().position(sydney).title(location.getEmployeeName()).icon(mBitmapDescriptor));
+                mGoogleMap.addMarker(new MarkerOptions().position(sydney).title(location.getEmployeeName()).icon(mBitmapDescriptor));
             }
+        }
+    }
+
+    private void setCamera() {
+        if (mMyLastLocation != null) {
+            mCameraPosition = new CameraPosition.Builder()
+                    .target(mMyLastLocation)
+                    .zoom(13)
+                    .build();
+            mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(mCameraPosition));
+        }
+    }
+
+
+
+    //UI settings of map
+    private void mapUiSetting(boolean flag) {
+
+        enableLocation(flag);
+
+        mGoogleMap.setBuildingsEnabled(flag);
+        mUiSettings.setZoomControlsEnabled(flag);
+        mUiSettings.setCompassEnabled(flag);
+        mUiSettings.setMyLocationButtonEnabled(flag);
+        mUiSettings.setScrollGesturesEnabled(flag);
+        mUiSettings.setZoomGesturesEnabled(flag);
+        mUiSettings.setTiltGesturesEnabled(flag);
+        mUiSettings.setRotateGesturesEnabled(flag);
+
+        mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+    }
+
+    private void enableLocation(boolean flag) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mGoogleMap.setMyLocationEnabled(flag);
+        } else if (!PermissionHandler.hasFineLocationPermission(this)) {
+            PermissionHandler.requestPermissions(this, PermissionHandler.REQUEST_FINE_LOCATION, getString(R.string.permission_msg_location), Manifest.permission.ACCESS_FINE_LOCATION);
+        } else if (!PermissionHandler.hasCoarseLocationPermission(this)) {
+            PermissionHandler.requestPermissions(this, PermissionHandler.REQUEST_FINE_LOCATION, getString(R.string.permission_msg_location), Manifest.permission.ACCESS_COARSE_LOCATION);
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+
+            case REQUEST_BOTH_LOCATION_PERMISSION:
+            case REQUEST_COARSE_LOCATION:
+            case REQUEST_FINE_LOCATION:
+
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Location enabled", Toast.LENGTH_SHORT).show();
+                    enableLocation(true);
+                } else {
+                    Toast.makeText(this, getString(R.string.toast_location_permision_denied), Toast.LENGTH_LONG).show();
+                }
+                break;
+        }
+    }
+
+
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == android.R.id.home){
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (!isPreviouslyLoaded) {
+            isPreviouslyLoaded = true;
+            mHandler.post(mLastLocation);
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        connectGoogleApiClient();
+    }
+
+    @Override
+    protected void onStart() {
+        connectGoogleApiClient();
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        disconnectGoogleApiClient();
+        super.onStop();
+    }
+
+    private void connectGoogleApiClient() {
+        if (!mGoogleApiClient.isConnected() && !mGoogleApiClient.isConnecting()) {
+            mGoogleApiClient.connect();
+        }
+    }
+
+    private void disconnectGoogleApiClient() {
+        if (mGoogleApiClient.isConnected() || mGoogleApiClient.isConnecting()) {
+            mGoogleApiClient.disconnect();
         }
     }
 }

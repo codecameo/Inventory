@@ -78,7 +78,7 @@ public class SendEmployeeLocationService extends IntentService {
             call.enqueue(new Callback<LocationSenderResponse>() {
                 @Override
                 public void onResponse(Call<LocationSenderResponse> call, Response<LocationSenderResponse> response) {
-                    Log.d("Location",response.body().getMessage());
+                    //Log.d("Location",response.body().getMessage());
                     LocationReceiver.completeWakefulIntent(intent);
                 }
 

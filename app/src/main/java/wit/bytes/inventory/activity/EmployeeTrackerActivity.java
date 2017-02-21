@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -79,5 +80,15 @@ public class EmployeeTrackerActivity extends BaseActivity implements View.OnClic
             startService(new Intent(EmployeeTrackerActivity.this, LocationTrackerService.class));
         }
         setupView();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == android.R.id.home){
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
